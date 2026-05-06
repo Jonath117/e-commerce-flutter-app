@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:app_cart/core/data/dummy_data.dart';
 import 'package:app_cart/core/domain/cart_item.dart';
+import 'package:app_cart/core/domain/product.dart';
+import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
 import '../widgets/product_card_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,6 +19,21 @@ class _HomePageState extends State<HomePage> {
 
   int get cartItemsCount {
     return cart.fold(0, (sum, item) => sum + item.quantity);
+  }
+
+  void _addToCart(Product product, int quantity) {
+    setState(() {
+      final existingIndex = cart.indexWhere((item) => item.product.id == product.id);
+      if (existingIndex >= 0) {
+        final existingItem = cart[existingIndex];
+        cart[existingIndex] = CartItem(
+          product: product,
+          quantity: existingItem.quantity + quantity,
+        );
+      } else {
+        cart.add(CartItem(product: product, quantity: quantity));
+      }
+    });
   }
 
   @override
@@ -78,7 +95,15 @@ class _HomePageState extends State<HomePage> {
             return ProductCardWidget(
               product: product,
               onTap: () {
-                
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProductDetailsPage(
+                      product: product,
+                      onAddToCart: _addToCart,
+                    ),
+                  ),
+                );
               },
             );
           },

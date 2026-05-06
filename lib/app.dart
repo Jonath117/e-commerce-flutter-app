@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app_cart/features/home/presentation/pages/home_page.dart';
-import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
+import 'features/home/presentation/pages/home_page.dart';
+import 'features/cart/presentation/pages/cart_page.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -9,6 +9,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'E-Commerce App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'features/home/presentation/pages/home_page.dart';
+import 'package:app_cart/features/home/presentation/pages/home_page.dart';
+import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -15,6 +16,7 @@ class MainApp extends StatelessWidget {
       initialRoute: HomePage.route,
       routes: {
         HomePage.route: (context) => const HomePage(),
+        CartPage.route: (context) => const CartPage(),
       },
     );
   }

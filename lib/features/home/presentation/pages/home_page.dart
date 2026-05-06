@@ -3,6 +3,7 @@ import 'package:app_cart/core/data/dummy_data.dart';
 import 'package:app_cart/core/domain/cart_item.dart';
 import 'package:app_cart/core/domain/product.dart';
 import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
+import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
 import '../widgets/product_card_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -47,8 +48,19 @@ class _HomePageState extends State<HomePage> {
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  
+                onPressed: () async {
+                  final updatedCart = await Navigator.pushNamed(
+                    context,
+                    CartPage.route,
+                    arguments: cart,
+                  ) as List<CartItem>?;
+
+                  if (updatedCart != null && mounted) {
+                    setState(() {
+                      cart.clear();
+                      cart.addAll(updatedCart);
+                    });
+                  }
                 },
               ),
               if (cart.isNotEmpty)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_cart/core/domain/product.dart';
+import 'package:app_cart/features/cart/presentation/pages/add_to_cart_page.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
@@ -78,8 +79,24 @@ class ProductDetailsPage extends StatelessWidget {
               backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
             ),
-            onPressed: () {
-              
+            onPressed: () async {
+              final quantity = await Navigator.push<int>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddToCartPage(),
+                ),
+              );
+
+              if (quantity != null && context.mounted) {
+                onAddToCart(product, quantity);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('$quantity x ${product.name} agregado(s) al carrito'),
+                    duration: const Duration(seconds: 2),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
             },
             child: const Text(
               'Agregar al carrito',

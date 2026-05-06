@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'features/home/presentation/pages/home_page.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'E-Commerce App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
       ),
+      initialRoute: HomePage.route,
+      routes: {
+        HomePage.route: (context) => const HomePage(),
+      },
     );
   }
 }

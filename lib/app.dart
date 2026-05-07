@@ -56,7 +56,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Envolvemos con MultiProvider o anidamos manualmente para tener ambos
     return MultiProvider(
       providers: [
         BlocProvider<CartBloc>(create: (context) => CartBloc()),
@@ -69,7 +68,6 @@ class MainApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           useMaterial3: true,
         ),
-        // Usamos la configuración de GoRouter que viene de upstream
         routerConfig: appRouter,
       ),
     );

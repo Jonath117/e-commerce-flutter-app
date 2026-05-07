@@ -1,3 +1,4 @@
+import 'package:app_cart/core/domain/cart_item.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,12 +27,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
   final cartNotifier = context.read<CartNotifier>();
-  void _openCart() {
-    context.go(CartPage.route);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+ 
     return Scaffold(
       appBar: AppBar(
         title: const Text('E-Commerce'),
@@ -44,11 +40,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.shopping_cart),
-                    onPressed: () async {
-                      Navigator.pushNamed(
-                        context,
-                        CartPage.route
-                      );
+                    onPressed: () {
+                      context.go(CartPage.route);
                     },
                   ),
                   if (cartNotifier.cart.isNotEmpty)
@@ -102,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                   ProductDetailsPage.route,
                   extra: {
                     'product': product,
-                    'onAddToCart': _addToCart,
+                    'onAddToCart': cartNotifier.addToCart,
                   },
                 );
               },

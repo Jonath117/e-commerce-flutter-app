@@ -1,5 +1,6 @@
+import 'package:app_cart/core/notifiers/cart_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:app_cart/core/domain/cart_item.dart';
+import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {
   static const String route = '/cart';
@@ -11,110 +12,118 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late List<CartItem> cart;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments as List<CartItem>?;
-    cart = args != null ? List.from(args) : [];
-  }
-
-  double get totalPrice {
-    return cart.fold(0, (sum, item) => sum + item.totalPrice);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, dynamic result) {
-        if (didPop) return;
-        Navigator.pop(context, cart);
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Mi Carrito'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, cart);
-            },
-          ),
+    final cart = context.watch<CartNotifier>();
+    final cartItems = cart.cart;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Mi Carrito'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        body: cart.isEmpty
-            ? const Center(
-                child: Text(
-                  'El carrito está vacío',
-                  style: TextStyle(fontSize: 18),
-                ),
-              )
-            : Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: cart.length,
-                      itemBuilder: (context, index) {
-                        final item = cart[index];
-                        return ListTile(
-                          leading: Image.network(
-                            item.product.imageUrl,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                          ),
-                          title: Text(item.product.name),
-                          subtitle: Text(
-                            'Cantidad: ${item.quantity}  -  \$${item.totalPrice.toStringAsFixed(2)}',
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                cart.removeAt(index);
-                              });
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          offset: Offset(0, -2),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '\$${totalPrice.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
       ),
+      body: cartItems.isEmpty
+          ? const Center(
+              child: Text(
+                'El carrito está vacío',
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: cartItems.length,
+                    itemBuilder: (context, index) {
+                      final item = cartItems[index];
+                      return ListTile(
+                        leading: Image.network(
+                          item.product.imageUrl,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                        title: Text(item.product.name),
+                        subtitle: Text(
+                          '\$${item.totalPrice.toStringAsFixed(2)}',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Botón de menos
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline),
+                              color: Colors.grey,
+                              onPressed: () {
+                                cart.updateQuantity(item.product.id, item.quantity - 1);
+                              },
+                            ),
+                            // Texto de la cantidad
+                            Text(
+                              '${item.quantity}',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            // Botón de más
+                            IconButton(
+                              icon: const Icon(Icons.add_circle_outline),
+                              color: Colors.blue,
+                              onPressed: () {
+                                cart.updateQuantity(item.product.id, item.quantity + 1);
+                              },
+                            ),
+                            // Botón de eliminar
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                cart.removeProduct(item.product.id);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        offset: Offset(0, -2),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Total:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '\$${cart.totalPrice.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }

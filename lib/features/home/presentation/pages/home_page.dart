@@ -1,43 +1,17 @@
+// lib/features/home/presentation/pages/home_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app_cart/blocs/cart/cart_bloc.dart';
+import 'package:app_cart/blocs/cart/cart_state.dart';
 import 'package:app_cart/core/data/dummy_data.dart';
-import 'package:app_cart/core/domain/cart_item.dart';
-import 'package:app_cart/core/domain/product.dart';
 import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
 import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
 import '../widgets/product_card_widget.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   static const String route = '/home';
 
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final List<CartItem> cart = [];
-
-  int get cartItemsCount {
-    return cart.fold(0, (sum, item) => sum + item.quantity);
-  }
-
-  void _addToCart(Product product, int quantity) {
-    setState(() {
-      final existingIndex = cart.indexWhere(
-        (item) => item.product.id == product.id,
-      );
-      if (existingIndex >= 0) {
-        final existingItem = cart[existingIndex];
-        cart[existingIndex] = CartItem(
-          product: product,
-          quantity: existingItem.quantity + quantity,
-        );
-      } else {
-        cart.add(CartItem(product: product, quantity: quantity));
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,54 +19,50 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('E-Commerce'),
         actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () async {
-                  final updatedCart =
-                      await Navigator.pushNamed(
-                            context,
-                            CartPage.route,
-                            arguments: cart,
-                          )
-                          as List<CartItem>?;
+          BlocBuilder<CartBloc, CartState>(
+            builder: (context, state) {
+              int itemCount = 0;
+              if (state is CartUpdated) {
+                itemCount = state.totalItems;
+              }
 
-                  if (updatedCart != null && mounted) {
-                    setState(() {
-                      cart.clear();
-                      cart.addAll(updatedCart);
-                    });
-                  }
-                },
-              ),
-              if (cart.isNotEmpty)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      '$cartItemsCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: () {
+                      Navigator.pushNamed(context, CartPage.route);
+                    },
                   ),
-                ),
-            ],
+                  if (itemCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '$itemCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -116,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                   MaterialPageRoute(
                     builder: (context) => ProductDetailsPage(
                       product: product,
-                      onAddToCart: _addToCart,
+                      // Ya no se pasa onAddToCart
                     ),
                   ),
                 );

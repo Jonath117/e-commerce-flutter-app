@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:app_cart/core/domain/cart_item.dart';
+import 'package:app_cart/features/home/presentation/pages/home_page.dart';
 
 class CartPage extends StatefulWidget {
   static const String route = '/cart';
@@ -16,12 +18,16 @@ class _CartPageState extends State<CartPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments as List<CartItem>?;
+    final args = GoRouterState.of(context).extra as List<CartItem>?;
     cart = args != null ? List.from(args) : [];
   }
 
   double get totalPrice {
     return cart.fold(0, (sum, item) => sum + item.totalPrice);
+  }
+
+  void _goBackHome() {
+    context.go(HomePage.route, extra: cart);
   }
 
   @override
@@ -30,16 +36,14 @@ class _CartPageState extends State<CartPage> {
       canPop: false,
       onPopInvokedWithResult: (didPop, dynamic result) {
         if (didPop) return;
-        Navigator.pop(context, cart);
+        _goBackHome();
       },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Mi Carrito'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, cart);
-            },
+            onPressed: _goBackHome,
           ),
         ),
         body: cart.isEmpty

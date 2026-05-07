@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AddToCartPage extends StatefulWidget {
+  static const String route = '/add-to-cart';
+
   const AddToCartPage({super.key});
 
   @override
@@ -57,7 +60,7 @@ class _AddToCartPageState extends State<AddToCartPage> {
             const SizedBox(height: 50),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, quantity);
+                context.pop(quantity);
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),

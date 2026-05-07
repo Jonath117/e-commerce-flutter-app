@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:app_cart/core/domain/product.dart';
 import 'package:app_cart/features/cart/presentation/pages/add_to_cart_page.dart';
 
 class ProductDetailsPage extends StatelessWidget {
+  static const String route = '/product-detail';
+
   final Product product;
   final void Function(Product, int) onAddToCart;
 
@@ -80,12 +83,7 @@ class ProductDetailsPage extends StatelessWidget {
               foregroundColor: Colors.white,
             ),
             onPressed: () async {
-              final quantity = await Navigator.push<int>(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddToCartPage(),
-                ),
-              );
+              final quantity = await context.push<int>(AddToCartPage.route);
 
               if (quantity != null && context.mounted) {
                 onAddToCart(product, quantity);

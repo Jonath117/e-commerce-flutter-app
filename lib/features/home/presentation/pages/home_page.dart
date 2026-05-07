@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:app_cart/core/data/dummy_data.dart';
 import 'package:app_cart/core/domain/cart_item.dart';
 import 'package:app_cart/core/domain/product.dart';
@@ -9,14 +10,25 @@ import '../widgets/product_card_widget.dart';
 class HomePage extends StatefulWidget {
   static const String route = '/home';
 
-  const HomePage({super.key});
+  final List<CartItem> initialCart;
+
+  const HomePage({
+    super.key,
+    this.initialCart = const [],
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<CartItem> cart = [];
+  late List<CartItem> cart;
+
+  @override
+  void initState() {
+    super.initState();
+    cart = List<CartItem>.from(widget.initialCart);
+  }
 
   int get cartItemsCount {
     return cart.fold(0, (sum, item) => sum + item.quantity);
@@ -37,6 +49,10 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _openCart() {
+    context.go(CartPage.route, extra: cart);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,20 +64,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
-                onPressed: () async {
-                  final updatedCart = await Navigator.pushNamed(
-                    context,
-                    CartPage.route,
-                    arguments: cart,
-                  ) as List<CartItem>?;
-
-                  if (updatedCart != null && mounted) {
-                    setState(() {
-                      cart.clear();
-                      cart.addAll(updatedCart);
-                    });
-                  }
-                },
+                onPressed: _openCart,
               ),
               if (cart.isNotEmpty)
                 Positioned(
@@ -107,14 +110,12 @@ class _HomePageState extends State<HomePage> {
             return ProductCardWidget(
               product: product,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailsPage(
-                      product: product,
-                      onAddToCart: _addToCart,
-                    ),
-                  ),
+                context.push(
+                  ProductDetailsPage.route,
+                  extra: {
+                    'product': product,
+                    'onAddToCart': _addToCart,
+                  },
                 );
               },
             );

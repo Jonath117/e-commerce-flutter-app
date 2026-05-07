@@ -1,16 +1,15 @@
+// lib/features/product_detail/presentation/pages/product_details_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app_cart/blocs/cart/cart_bloc.dart';
+import 'package:app_cart/blocs/cart/cart_event.dart';
 import 'package:app_cart/core/domain/product.dart';
 import 'package:app_cart/features/cart/presentation/pages/add_to_cart_page.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
-  final void Function(Product, int) onAddToCart;
 
-  const ProductDetailsPage({
-    super.key,
-    required this.product,
-    required this.onAddToCart,
-  });
+  const ProductDetailsPage({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +73,10 @@ class ProductDetailsPage extends StatelessWidget {
               );
 
               if (quantity != null && context.mounted) {
-                onAddToCart(product, quantity);
+                // Dispara el evento al BLoC
+                context.read<CartBloc>().add(
+                  AddProduct(product: product, quantity: quantity),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(

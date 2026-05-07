@@ -15,18 +15,12 @@ class ProductDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.name),
-      ),
+      appBar: AppBar(title: Text(product.name)),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.network(
-              product.imageUrl,
-              height: 300,
-              fit: BoxFit.cover,
-            ),
+            Image.network(product.imageUrl, height: 300, fit: BoxFit.cover),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -51,18 +45,12 @@ class ProductDetailsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Text(
                     'Descripción',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     product.description,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
               ),
@@ -82,16 +70,16 @@ class ProductDetailsPage extends StatelessWidget {
             onPressed: () async {
               final quantity = await Navigator.push<int>(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const AddToCartPage(),
-                ),
+                MaterialPageRoute(builder: (context) => const AddToCartPage()),
               );
 
               if (quantity != null && context.mounted) {
                 onAddToCart(product, quantity);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('$quantity x ${product.name} agregado(s) al carrito'),
+                    content: Text(
+                      '$quantity x ${product.name} agregado(s) al carrito',
+                    ),
                     duration: const Duration(seconds: 2),
                     backgroundColor: Colors.green,
                   ),

@@ -24,7 +24,9 @@ class _HomePageState extends State<HomePage> {
 
   void _addToCart(Product product, int quantity) {
     setState(() {
-      final existingIndex = cart.indexWhere((item) => item.product.id == product.id);
+      final existingIndex = cart.indexWhere(
+        (item) => item.product.id == product.id,
+      );
       if (existingIndex >= 0) {
         final existingItem = cart[existingIndex];
         cart[existingIndex] = CartItem(
@@ -49,11 +51,13 @@ class _HomePageState extends State<HomePage> {
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: () async {
-                  final updatedCart = await Navigator.pushNamed(
-                    context,
-                    CartPage.route,
-                    arguments: cart,
-                  ) as List<CartItem>?;
+                  final updatedCart =
+                      await Navigator.pushNamed(
+                            context,
+                            CartPage.route,
+                            arguments: cart,
+                          )
+                          as List<CartItem>?;
 
                   if (updatedCart != null && mounted) {
                     setState(() {

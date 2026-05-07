@@ -7,6 +7,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartEmpty()) {
     on<AddProduct>(_onAddProduct);
     on<RemoveProduct>(_onRemoveProduct);
+    on<ClearCart>(_onClearCart);
   }
 
   void _onAddProduct(AddProduct event, Emitter<CartState> emit) {
@@ -51,5 +52,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(CartUpdated(items: updatedItems));
       }
     }
+  }
+
+  void _onClearCart(ClearCart event, Emitter<CartState> emit) {
+    emit(CartEmpty());
   }
 }

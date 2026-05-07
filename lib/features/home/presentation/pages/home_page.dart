@@ -3,18 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_cart/blocs/cart/cart_bloc.dart';
 import 'package:app_cart/blocs/cart/cart_state.dart';
+import 'package:app_cart/core/domain/cart_item.dart';
+import 'package:go_router/go_router.dart';
 import 'package:app_cart/core/data/dummy_data.dart';
 import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
 import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
+import 'package:app_cart/core/notifiers/cart_notifier.dart';
 import '../widgets/product_card_widget.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/home';
 
-  const HomePage({super.key});
+  final List<CartItem> initialCart;
+
+  const HomePage({super.key, this.initialCart = const []});
 
   @override
   Widget build(BuildContext context) {
+    final cartNotifier = context.read<CartNotifier>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('E-Commerce'),
@@ -32,10 +39,10 @@ class HomePage extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.shopping_cart),
                     onPressed: () {
-                      Navigator.pushNamed(context, CartPage.route);
+                      context.go(CartPage.route);
                     },
                   ),
-                  if (itemCount > 0)
+                  if (cartNotifier.cart.isNotEmpty)
                     Positioned(
                       right: 8,
                       top: 8,
@@ -81,14 +88,12 @@ class HomePage extends StatelessWidget {
             return ProductCardWidget(
               product: product,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailsPage(
-                      product: product,
-                      // Ya no se pasa onAddToCart
-                    ),
-                  ),
+                context.push(
+                  ProductDetailsPage.route,
+                  extra: {
+                    'product': product,
+                    'onAddToCart': cartNotifier.addToCart,
+                  },
                 );
               },
             );

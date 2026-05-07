@@ -3,13 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_cart/blocs/cart/cart_bloc.dart';
 import 'package:app_cart/blocs/cart/cart_event.dart';
+import 'package:go_router/go_router.dart';
 import 'package:app_cart/core/domain/product.dart';
 import 'package:app_cart/features/cart/presentation/pages/add_to_cart_page.dart';
 
 class ProductDetailsPage extends StatelessWidget {
-  final Product product;
+  static const String route = '/product-detail';
 
-  const ProductDetailsPage({super.key, required this.product});
+  final Product product;
+  final void Function(Product, int)? onAddToCart;
+
+  const ProductDetailsPage({
+    super.key,
+    required this.product,
+    required this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,16 +75,14 @@ class ProductDetailsPage extends StatelessWidget {
               foregroundColor: Colors.white,
             ),
             onPressed: () async {
-              final quantity = await Navigator.push<int>(
-                context,
-                MaterialPageRoute(builder: (context) => const AddToCartPage()),
-              );
+              final quantity = await context.push<int>(AddToCartPage.route);
 
               if (quantity != null && context.mounted) {
                 // Dispara el evento al BLoC
                 context.read<CartBloc>().add(
                   AddProduct(product: product, quantity: quantity),
                 );
+                onAddToCart?.call(product, quantity);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(

@@ -13,9 +13,7 @@ class _AddToCartPageState extends State<AddToCartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Seleccionar cantidad'),
-      ),
+      appBar: AppBar(title: const Text('Seleccionar cantidad')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -36,12 +34,19 @@ class _AddToCartPageState extends State<AddToCartPage> {
                       });
                     }
                   },
-                  icon: const Icon(Icons.remove_circle_outline, size: 40, color: Colors.blue),
+                  icon: const Icon(
+                    Icons.remove_circle_outline,
+                    size: 40,
+                    color: Colors.blue,
+                  ),
                 ),
                 const SizedBox(width: 30),
                 Text(
                   '$quantity',
-                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(width: 30),
                 IconButton(
@@ -50,7 +55,11 @@ class _AddToCartPageState extends State<AddToCartPage> {
                       quantity++;
                     });
                   },
-                  icon: const Icon(Icons.add_circle_outline, size: 40, color: Colors.blue),
+                  icon: const Icon(
+                    Icons.add_circle_outline,
+                    size: 40,
+                    color: Colors.blue,
+                  ),
                 ),
               ],
             ),
@@ -60,7 +69,10 @@ class _AddToCartPageState extends State<AddToCartPage> {
                 Navigator.pop(context, quantity);
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 15,
+                ),
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(

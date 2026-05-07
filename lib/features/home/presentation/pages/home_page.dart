@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:app_cart/core/data/dummy_data.dart';
 import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
@@ -9,7 +10,12 @@ import '../widgets/product_card_widget.dart';
 class HomePage extends StatefulWidget {
   static const String route = '/home';
 
-  const HomePage({super.key});
+  final List<CartItem> initialCart;
+
+  const HomePage({
+    super.key,
+    this.initialCart = const [],
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -19,14 +25,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
-    final cartNotifier = context.read<CartNotifier>();
+  final cartNotifier = context.read<CartNotifier>();
+  void _openCart() {
+    context.go(CartPage.route);
+  }
 
-
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('E-Commerce'),
         actions: [
-
           ListenableBuilder(
             listenable: cartNotifier, builder: 
             (context, _) {
@@ -89,14 +98,12 @@ class _HomePageState extends State<HomePage> {
             return ProductCardWidget(
               product: product,
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailsPage(
-                      product: product,
-                      onAddToCart: cartNotifier.addToCart,
-                    ),
-                  ),
+                context.push(
+                  ProductDetailsPage.route,
+                  extra: {
+                    'product': product,
+                    'onAddToCart': _addToCart,
+                  },
                 );
               },
             );

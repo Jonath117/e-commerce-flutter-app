@@ -1,5 +1,8 @@
 import 'package:app_cart/core/notifiers/cart_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:app_cart/core/domain/cart_item.dart';
+import 'package:app_cart/features/home/presentation/pages/home_page.dart';
 import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {
@@ -23,7 +26,7 @@ class _CartPageState extends State<CartPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            context.go(HomePage.route);
           },
         ),
       ),

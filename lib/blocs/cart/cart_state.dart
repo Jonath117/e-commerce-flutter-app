@@ -5,8 +5,6 @@ abstract class CartState {}
 
 class CartEmpty extends CartState {}
 
-class CartLoading extends CartState {}
-
 class CartUpdated extends CartState {
   final List<CartItem> items;
 

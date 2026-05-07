@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:app_cart/core/domain/cart_item.dart';
 import 'package:app_cart/core/domain/product.dart';
-import 'package:app_cart/features/home/presentation/pages/home_page.dart';
-import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
 import 'package:app_cart/features/cart/presentation/pages/add_to_cart_page.dart';
 import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
+import 'features/home/presentation/pages/home_page.dart';
+import 'features/cart/presentation/pages/cart_page.dart';
+import 'core/notifiers/cart_notifier.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: HomePage.route,
@@ -47,19 +49,23 @@ final GoRouter appRouter = GoRouter(
   ],
 );
 
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'E-Commerce App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
+    return ChangeNotifierProvider(
+      create: (_) => CartNotifier(),
+      child: MaterialApp.router(
+        title: 'E-Commerce App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          useMaterial3: true,
+        ),
+        routerConfig: appRouter
       ),
-      routerConfig: appRouter,
     );
   }
 }

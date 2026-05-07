@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:app_cart/core/data/dummy_data.dart';
-import 'package:app_cart/core/domain/cart_item.dart';
-import 'package:app_cart/core/domain/product.dart';
 import 'package:app_cart/features/product_detail/presentation/pages/product_details_page.dart';
 import 'package:app_cart/features/cart/presentation/pages/cart_page.dart';
+import 'package:app_cart/core/notifiers/cart_notifier.dart';
 import '../widgets/product_card_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,35 +22,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<CartItem> cart;
-
   @override
-  void initState() {
-    super.initState();
-    cart = List<CartItem>.from(widget.initialCart);
-  }
+  Widget build(BuildContext context) {
 
-  int get cartItemsCount {
-    return cart.fold(0, (sum, item) => sum + item.quantity);
-  }
-
-  void _addToCart(Product product, int quantity) {
-    setState(() {
-      final existingIndex = cart.indexWhere((item) => item.product.id == product.id);
-      if (existingIndex >= 0) {
-        final existingItem = cart[existingIndex];
-        cart[existingIndex] = CartItem(
-          product: product,
-          quantity: existingItem.quantity + quantity,
-        );
-      } else {
-        cart.add(CartItem(product: product, quantity: quantity));
-      }
-    });
-  }
-
+  final cartNotifier = context.read<CartNotifier>();
   void _openCart() {
-    context.go(CartPage.route, extra: cart);
+    context.go(CartPage.route);
   }
 
   @override
@@ -59,40 +36,51 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('E-Commerce'),
         actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: _openCart,
-              ),
-              if (cart.isNotEmpty)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text(
-                      '$cartItemsCount',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+          ListenableBuilder(
+            listenable: cartNotifier, builder: 
+            (context, _) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: () async {
+                      Navigator.pushNamed(
+                        context,
+                        CartPage.route
+                      );
+                    },
                   ),
-                ),
-            ],
-          ),
+                  if (cartNotifier.cart.isNotEmpty)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${cartNotifier.cartItemsCount}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            }
+          )
+          
         ],
       ),
       body: Padding(

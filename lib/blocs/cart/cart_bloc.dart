@@ -20,7 +20,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         (item) => item.product.id == event.product.id,
       );
 
-      if (existingIndex > 0) {
+      if (existingIndex >= 0) {
         final existing = updatedItems[existingIndex];
         updatedItems[existingIndex] = CartItem(
           product: event.product,
